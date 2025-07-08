@@ -6,6 +6,7 @@ public class Customer {
     private String address;
     private String phone;
     private int units;
+    private String email;
 
     // Getters and Setters
     public int getId() { return id; }
@@ -22,5 +23,8 @@ public class Customer {
 
     public int getUnits() { return units; }
     public void setUnits(int units) { this.units = units; }
+
+    public String getEmail(){return email;}
+    public void setEmail(String email){this.email=email;}
 }
 
