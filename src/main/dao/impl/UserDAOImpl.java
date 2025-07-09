@@ -1,7 +1,6 @@
 package main.dao.impl;
 
 import main.dao.UserDAO;
-import main.model.Customer;
 import main.model.User;
 import main.util.DBConnection;
 import main.util.PasswordHasher;
@@ -80,7 +79,8 @@ public class UserDAOImpl implements UserDAO {
             return false;
         }
         registerUser(user);
-        System.out.println("Customer saved successfully.");
+        System.out.println("User registered successfully.");
+
         return true;
 
     }

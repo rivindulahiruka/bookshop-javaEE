@@ -1,6 +1,4 @@
 package main.dao;
-
-import main.model.Customer;
 import main.model.User;
 
 public interface UserDAO {
