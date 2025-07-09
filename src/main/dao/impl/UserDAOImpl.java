@@ -1,9 +1,11 @@
 package main.dao.impl;
 
 import main.dao.UserDAO;
+import main.model.Customer;
 import main.model.User;
 import main.util.DBConnection;
 import main.util.PasswordHasher;
+import main.util.Validator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,5 +66,24 @@ public class UserDAOImpl implements UserDAO {
         }
         return null;
     }
+    public boolean registerWithValidation(User user) {
+        if (!Validator.isNotEmpty(user.getUserName())){
+            System.err.println("Error: User name cannot be empty!");
+            return false;
+        }
+        if (!Validator.isValidEmail(user.getEmail())) {
+            System.err.println("Error: Invalid email address!");
+            return false;
+        }
+        if (!Validator.isValidPhone(user.getPhoneNum())) {
+            System.err.println("Error: Invalid phone number! (Must be 10 digits)");
+            return false;
+        }
+        registerUser(user);
+        System.out.println("Customer saved successfully.");
+        return true;
 
+    }
 }
+
+

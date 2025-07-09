@@ -23,7 +23,7 @@ public class RegisterServlet extends HttpServlet {
         user.setRole(request.getParameter("role"));
 
         UserDAO userDAO = new UserDAOImpl();
-        boolean success = userDAO.registerUser(user);
+        boolean success = userDAO.registerWithValidation(user);
 
         if (success) {
             HttpSession session = request.getSession();
