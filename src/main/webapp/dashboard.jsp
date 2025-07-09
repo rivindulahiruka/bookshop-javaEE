@@ -1,3 +1,6 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="main.model.User" %>
+
 <form action="CustomerServlet" method="post">
     Name: <input type="text" name="name"><br/>
     Address: <input type="text" name="address"><br/>

@@ -1,5 +1,6 @@
-package main.dao;
+package main.dao.impl;
 
+import main.dao.CustomerDAO;
 import main.model.Customer;
 import main.util.DBConnection;
 import main.util.Validator;

@@ -11,7 +11,7 @@ public class PasswordHasher {
 
             StringBuilder sb=new StringBuilder();
             for (byte b: hashBytes){
-                sb.append(String.format("&02x",b));
+                sb.append(String.format("%02x",b));
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
