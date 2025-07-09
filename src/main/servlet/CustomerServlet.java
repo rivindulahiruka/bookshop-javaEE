@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import main.dao.CustomerDAOImpl;
+import main.dao.impl.CustomerDAOImpl;
 import main.model.Customer;
 
 import java.io.IOException;

@@ -1,5 +1,6 @@
-package main.dao;
+package main.dao.impl;
 
+import main.dao.CustomerDAO;
 import main.model.Customer;
 import main.util.DBConnection;
 import main.util.Validator;
@@ -75,7 +76,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("Error: Invalid phone number! (Must be 10 digits)");
             return false;
         }
-        save(customer);
+        saveWithValidation(customer);
         System.out.println("Customer saved successfully.");
         return true;
     }
