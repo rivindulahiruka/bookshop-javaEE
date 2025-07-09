@@ -75,7 +75,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("Error: Invalid phone number! (Must be 10 digits)");
             return false;
         }
-        save(customer);
+        saveWithValidation(customer);
         System.out.println("Customer saved successfully.");
         return true;
     }
