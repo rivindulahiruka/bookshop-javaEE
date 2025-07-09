@@ -15,7 +15,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         String query= "INSERT INTO customers (name, address, phone, units, email) VALUES (?, ?, ?, ?, ?)";
 
         try(Connection conn=DBConnection.getConnection();
-            PreparedStatement stmt=conn.prepareStatement(query);) {
+            PreparedStatement stmt=conn.prepareStatement(query)) {
 
             stmt.setString(1,customer.getName());
             stmt.setString(2, customer.getAddress());
@@ -76,8 +76,8 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("Error: Invalid phone number! (Must be 10 digits)");
             return false;
         }
-        saveWithValidation(customer);
-        System.out.println("Customer saved successfully.");
+        save(customer);
+        System.out.println("registration is successfully.");
         return true;
     }
     private Customer extractCustomer(ResultSet rs) throws SQLException {
