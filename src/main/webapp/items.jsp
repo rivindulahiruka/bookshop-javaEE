@@ -1,9 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List" %>
-<%@ page import="main.model.Customer" %>
 <!DOCTYPE html>
 <html lang="en">
-
 <body>
 
 <div class="layout">
@@ -12,12 +9,12 @@
     <nav>
       <ul class="nav">
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
-        <li><a href="CustomerList" class="nav-link active">🧑‍🤝‍🧑 Customers</a></li>
-        <li><a href="items.jsp" class="nav-link">📦 Items</a></li>
-        <li><a href="#" class="nav-link">🗂 Account Details</a></li>
+        <li><a href="customer.jsp" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
+        <li><a href="items.jsp" class="nav-link active">📦 Items</a></li>
+        <li><a href="#" class="nav-link">🗂️ Account Details</a></li>
         <li><a href="#" class="nav-link">💳 Billing</a></li>
         <li><a href="#" class="nav-link">🆘 Help</a></li>
-        <li><a href="" class="nav-link">📈 Reports</a></li>
+        <li><a href="#" class="nav-link">📈 Reports</a></li>
       </ul>
     </nav>
     <div class="logout-container">
@@ -27,65 +24,51 @@
 
   <!-- Main Content -->
   <main class="main">
-    <h2 class="title">👥 Customer Management</h2>
+    <h2 class="title">📦 Item Management</h2>
 
-    <!-- Add Customer Form -->
-    <form class="customer-form" action="Customer" method="post">
-      <h3>Add New Customer</h3>
+    <!-- Add/Update Item Form -->
+    <form class="item-form" method="post" action="ItemUploadServlet" enctype="multipart/form-data">
+      <h3>Add / Update Item</h3>
       <div class="form-group">
-        <input type="text" name="accNo" placeholder="Account Number" required />
-        <input type="text" name="name" placeholder="Full Name" required />
+        <input type="text" name="itemCode" placeholder="Item Code" required />
+        <input type="text" name="itemName" placeholder="Item Name" required />
       </div>
       <div class="form-group">
-        <input type="text" name="address" placeholder="Address" required />
-        <input type="tel" name="phone" placeholder="Telephone Number" required />
+        <input type="number" name="price" placeholder="Price" required />
+        <input type="number" name="stock" placeholder="Stock Quantity" required />
       </div>
       <div class="form-group">
-        <input type="email" name="email" placeholder="Email Address" required />
+        <input type="file" name="itemImage" accept="image/*" />
       </div>
-      <button type="submit" class="btn-submit">Add Customer</button>
+      <button type="submit" class="btn-submit">Save Item</button>
     </form>
 
-    <c:if test="${param.success == 'true'}">
-      <p style="color: green;">Customer Added Successfully!</p>
-    </c:if>
 
-    <!-- Customer Table -->
+    <!-- Item Table -->
     <div class="table-container">
-      <h3>Customer Accounts</h3>
+      <h3>Item List</h3>
       <table>
         <thead>
           <tr>
-            <th>Account No</th>
+            <th>Item Code</th>
             <th>Name</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Email</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <%
-            List<Customer> customers = (List<Customer>) request.getAttribute("customers");
-            if (customers != null) {
-              for (Customer customer : customers) {
-          %>
+          <!-- Example Row -->
           <tr>
-            <td><%= customer.getaccNo() %></td>
-            <td><%= customer.getName() %></td>
-            <td><%= customer.getAddress() %></td>
-            <td><%= customer.getPhone() %></td>
-            <td><%= customer.getEmail() %></td>
+            <td>ITM001</td>
+            <td>Notebook A5</td>
+            <td>250.00</td>
+            <td>120</td>
+            <td>
+              <button class="btn-edit">Edit</button>
+              <button class="btn-delete">Delete</button>
+            </td>
           </tr>
-          <%
-              }
-            } else {
-          %>
-          <tr>
-            <td colspan="5">No customers found.</td>
-          </tr>
-          <%
-            }
-          %>
         </tbody>
       </table>
     </div>
@@ -94,9 +77,12 @@
 
 </body>
 
+
+
+
 <head>
   <meta charset="UTF-8">
-  <title>Pahana Edu | Customers</title>
+  <title>Pahana Edu | Items</title>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -122,7 +108,7 @@
   /* Sidebar */
   .sidebar {
     width: 285px;
-    height:670px;
+    height: 670px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
     border-radius: 0 20px 20px 0;
@@ -149,7 +135,8 @@
     text-decoration: none;
   }
 
-  .nav-link:hover {
+  .nav-link:hover,
+  .nav-link.active {
     background-color: rgba(224, 210, 255, 0.5);
     color: #a084e8;
     font-weight: 600;
@@ -174,12 +161,8 @@
   }
 
   .logout-container {
-
     text-align: center;
   }
-
-
-
 
   /* Main Content */
   .main {
@@ -195,7 +178,7 @@
   }
 
   /* Form */
-  .customer-form {
+  .item-form {
     background: #f3e9f7;
     padding: 30px;
     border-radius: 16px;
@@ -203,7 +186,7 @@
     margin-bottom: 40px;
   }
 
-  .customer-form h3 {
+  .item-form h3 {
     margin-bottom: 20px;
     color: #7c6589;
   }
@@ -215,7 +198,7 @@
     flex-wrap: wrap;
   }
 
-  .customer-form input {
+  .item-form input {
     flex: 1;
     padding: 12px;
     border: 1px solid #ddd;
@@ -283,6 +266,8 @@
     background-color: #ff6b81;
     color: white;
   }
+
   </style>
 </head>
+
 </html>
