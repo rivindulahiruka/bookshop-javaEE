@@ -15,7 +15,7 @@
     <nav>
       <ul class="nav">
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
-        <li><a href="customers.jsp" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
+        <li><a href="customer.jsp" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
         <li><a href="#" class="nav-link">📦 Items</a></li>
         <li><a href="#" class="nav-link">🗂 Account Details</a></li>
         <li><a href="#" class="nav-link">💳 Billing</a></li>
