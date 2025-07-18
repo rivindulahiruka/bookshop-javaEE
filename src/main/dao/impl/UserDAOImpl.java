@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class UserDAOImpl implements UserDAO {
     @Override
     public boolean registerUser(User user) {
-        String sql = "INSERT INTO users (username, password, email, phone, role) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email, phoneNum, role) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
