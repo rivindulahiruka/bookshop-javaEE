@@ -1,4 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="main.model.Customer" %>
+<%
+    Customer customer = (Customer) request.getAttribute("customer");
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +17,7 @@
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
         <li><a href="Customer" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
         <li><a href="Item" class="nav-link">📦 Items</a></li>
-        <li><a href="accountDetails.jsp" class="nav-link">🗂️ Account Details</a></li>
+        <li><a href="AccountDetails" class="nav-link">🗂️ Account Details</a></li>
         <li><a href="billing.jsp" class="nav-link active">💳 Billing</a></li>
         <li><a href="help.jsp" class="nav-link">🆘 Help</a></li>
         <li><a href="reports.jsp" class="nav-link">📈 Reports</a></li>
@@ -23,58 +28,95 @@
     </div>
   </aside>
 
-  <!-- Billing Content -->
-  <div class="billing-main">
-
-    <!-- Left: Item List -->
-    <div class="item-list">
-      <!-- Sample Item -->
-      <div class="item">
-        <h4 class="item-name">Notebook</h4>
-        <p class="item-price">Rs. 250</p>
-        <button class="add-to-cart">Add to Cart</button>
-      </div>
-    </div>
 
 
 
-    <!-- Right: Cart Panel -->
-    <div class="cart">
-        <h3>Cart</h3>
-        <div class="cart-items"></div>
+<!-- Main Wrapper -->
+<div class="main">
+  <h2 class="title">Billing Page</h2>
 
-        <hr style="margin: 20px 0; border-color: #d2bfff;" />
-
-        <div class="cart-item" style="font-weight: bold;">
-          <span>Total</span>
-          <span id="total-price">Rs. 0</span>
-        </div>
-
-        <button class="checkout">Checkout</button>
-
-      <!--  Popup Modal -->
-       <div class="modal hidden">
-            <div class="modal-content">
-              <span class="close">&times;</span>
-              <h3>Order Summary</h3>
-              <div id="modal-summary"></div>
-              <hr />
-              <h4>Customer Details</h4>
-              <form>
-                <input type="text" placeholder="Full Name" required />
-                <input type="text" placeholder="Address" required />
-                <input type="tel" placeholder="Contact Number" required />
-                <input type="email" placeholder="Email" required />
-                <button type="submit">Confirm Order</button>
-              </form>
-            </div>
-
-    </div>
-
+  <!-- 🔍 Search Box -->
+  <div class="search-box">
+    <form method="get" action="SearchCustomer">
+      <input type="text" name="accountNumber" placeholder="Enter Account Number" />
+      <input type="text" name="name" placeholder="Or Enter Customer Name" />
+      <button type="submit">Search</button>
+    </form>
   </div>
+
+  <!-- 👤 Customer Details -->
+
+  <div class="details">
+    <% if (customer != null) { %>
+      <div class="detail-row">
+        <div class="label">Account Number:</div>
+        <div class="value"><%= customer.getaccNo() %></div>
+      </div>
+      <div class="detail-row">
+        <div class="label">Full Name:</div>
+        <div class="value"><%= customer.getName() %></div>
+      </div>
+    <% } else if (request.getParameter("accountNumber") != null || request.getParameter("name") != null) { %>
+      <p style="color: red;">❌ No customer found with that information.</p>
+    <% } %>
+  </div>
+
+
+
+  <!-- Billing Content -->
+    <div class="billing-main">
+
+      <!-- Left: Item List -->
+      <div class="item-list">
+        <!-- Sample Item -->
+        <div class="item">
+          <h4 class="item-name">Notebook</h4>
+          <p class="item-price">Rs. 250</p>
+          <button class="add-to-cart">Add to Cart</button>
+        </div>
+      </div>
+
+
+
+      <!-- Right: Cart Panel -->
+      <div class="cart">
+          <h3>Cart</h3>
+          <div class="cart-items"></div>
+
+          <hr style="margin: 20px 0; border-color: #d2bfff;" />
+
+          <div class="cart-item" style="font-weight: bold;">
+            <span>Total</span>
+            <span id="total-price">Rs. 0</span>
+          </div>
+
+          <button class="checkout">Checkout</button>
+
+        <!--  Popup Modal -->
+         <div class="modal hidden">
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Order Summary</h3>
+                <div id="modal-summary"></div>
+                <hr />
+                <h4>Customer Details</h4>
+                <form>
+                  <input type="text" placeholder="Full Name" required />
+                  <input type="text" placeholder="Address" required />
+                  <input type="tel" placeholder="Contact Number" required />
+                  <input type="email" placeholder="Email" required />
+                  <button type="submit">Confirm Order</button>
+                </form>
+              </div>
+    </div>
+  </div>
+</div>
 </div>
 
 </body>
+
+
+
 
 <script>
   const cartItemsContainer = document.querySelector('.cart-items');
@@ -324,137 +366,194 @@
     }
 
     /* Cart Section */
-    .cart {
-      position: fixed;
-        top: 0;
-        right: 0;
-        width: 300px;
-        height: 100vh;
-        background: #e9d8fd;
-        border-radius: 20px 0 0 20px;
-        padding: 20px;
-        box-shadow: -4px 0 10px rgba(186, 170, 255, 0.2);
-        overflow-y: auto;
-        z-index: 10;
-    }
+        .cart {
+          position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100vh;
+            background: #e9d8fd;
+            border-radius: 20px 0 0 20px;
+            padding: 20px;
+            box-shadow: -4px 0 10px rgba(186, 170, 255, 0.2);
+            overflow-y: auto;
+            z-index: 10;
+        }
 
-    .cart h3 {
-      text-align: center;
+        .cart h3 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #5c4a72;
+        }
+
+        .cart-item {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 15px;
+          padding: 10px;
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: 0 2px 6px rgba(186, 170, 255, 0.1);
+        }
+
+        .cart-item span {
+          font-size: 14px;
+          font-weight: 500;
+          color: #5c4a72;
+        }
+
+        .checkout {
+          margin-top: 20px;
+          background-color: #a084e8;
+          color: white;
+          width: 100%;
+          padding: 12px;
+          border: none;
+          border-radius: 30px;
+          cursor: pointer;
+          font-weight: bold;
+          transition: 0.3s ease;
+        }
+
+        .checkout:hover {
+          background-color: #8e6cd0;
+        }
+
+        .quantity-controls {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          margin: 0 10px;
+        }
+
+        .quantity-controls button {
+          padding: 2px 6px;
+          background-color: #a084e8;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 30px;
+          color: white;
+        }
+
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(75, 0, 130, 0.4); /* purple overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+          }
+
+          .hidden {
+            display: none;
+          }
+
+          .modal-content {
+            background: #f8f0ff;
+            padding: 20px;
+            border-radius: 12px;
+            width: 350px;
+            color: #4b0082;
+            box-shadow: 0 0 10px #dabfff;
+            position: relative;
+          }
+
+          .modal-content h3, .modal-content h4 {
+            margin-top: 0;
+          }
+
+          .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            border: 1px solid #dabfff;
+            border-radius: 5px;
+            font-size: 14px;
+          }
+
+          .modal-content button {
+            background: #a96dff;
+            border: none;
+            margin-top: 15px;
+            padding: 10px;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+          }
+
+          .close {
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #4b0082;
+          }
+
+
+
+
+
+    .search-box {
+      background: #f3e8ff;
+      padding: 20px;
       margin-bottom: 20px;
-      color: #5c4a72;
-    }
-
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      padding: 10px;
-      background: #fff;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(186, 170, 255, 0.1);
+      margin-left: 300px;
     }
 
-    .cart-item span {
-      font-size: 14px;
-      font-weight: 500;
-      color: #5c4a72;
+    .search-box form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .checkout {
-      margin-top: 20px;
-      background-color: #a084e8;
-      color: white;
-      width: 100%;
-      padding: 12px;
+    .search-box input {
+      padding: 8px;
+      border: 1px solid #d2bfff;
+      border-radius: 5px;
+      min-width: 200px;
+    }
+
+    .search-box button {
+      padding: 8px 16px;
+      background-color: #cba3ff;
       border: none;
-      border-radius: 30px;
-      cursor: pointer;
+      border-radius: 5px;
+      color: #4b0082;
       font-weight: bold;
-      transition: 0.3s ease;
-    }
-
-    .checkout:hover {
-      background-color: #8e6cd0;
-    }
-
-    .quantity-controls {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      margin: 0 10px;
-    }
-
-    .quantity-controls button {
-      padding: 2px 6px;
-      background-color: #a084e8;
-      font-size: 16px;
       cursor: pointer;
-      border-radius: 30px;
-      color: white;
     }
 
+    .details {
+      margin-top: 15px;
+      margin-left: 310px;
+    }
 
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(75, 0, 130, 0.4); /* purple overlay */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
+    .detail-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
 
-      .hidden {
-        display: none;
-      }
+    .label {
+      font-weight: bold;
+      color: #4b0082;
+    }
 
-      .modal-content {
-        background: #f8f0ff;
-        padding: 20px;
-        border-radius: 12px;
-        width: 350px;
-        color: #4b0082;
-        box-shadow: 0 0 10px #dabfff;
-        position: relative;
-      }
+    .value {
+      color: #333;
+    }
 
-      .modal-content h3, .modal-content h4 {
-        margin-top: 0;
-      }
-
-      .modal-content input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 8px;
-        border: 1px solid #dabfff;
-        border-radius: 5px;
-        font-size: 14px;
-      }
-
-      .modal-content button {
-        background: #a96dff;
-        border: none;
-        margin-top: 15px;
-        padding: 10px;
-        color: white;
-        font-weight: bold;
-        border-radius: 6px;
-        cursor: pointer;
-        width: 100%;
-      }
-
-      .close {
-        position: absolute;
-        top: 5px;
-        right: 15px;
-        font-size: 22px;
-        cursor: pointer;
-        color: #4b0082;
-      }
 
   </style>
 </head>
+
 </html>
