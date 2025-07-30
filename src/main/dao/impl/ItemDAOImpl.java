@@ -1,4 +1,4 @@
-package main.dao.impl;
+package dao.impl;
 
 import main.dao.ItemDAO;
 import main.model.Item;
@@ -11,28 +11,65 @@ import java.util.List;
 public class ItemDAOImpl implements ItemDAO {
 
     @Override
-    public void addItem(Item item) {
-        String sql = "INSERT INTO items (itemCode, itemName, price, stock, is_deleted) VALUES (?, ?, ?, ?, ?)";
+    public void save(Item item) {
+        String query = "INSERT INTO items (item_code, name, price, stock) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, item.getItemCode());
             stmt.setString(2, item.getName());
             stmt.setDouble(3, item.getPrice());
             stmt.setInt(4, item.getStock());
-            stmt.setBoolean(5, false); // is_deleted default to false
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void updateItem(Item item) {
-        String sql = "UPDATE items SET itemName = ?, price = ?, stock = ? WHERE itemCode = ?";
+    public List<Item> findAll() {
+        List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM items";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                items.add(extractItem(rs));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return items;
+    }
+
+    @Override
+    public Item findByCode(String itemCode) {
+        String query = "SELECT * FROM items WHERE item_code = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, itemCode);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractItem(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    @Override
+    public void update(Item item) {
+        String query = "UPDATE items SET name = ?, price = ?, stock = ? WHERE item_code = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, item.getName());
             stmt.setDouble(2, item.getPrice());
@@ -41,74 +78,35 @@ public class ItemDAOImpl implements ItemDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
+
+
     @Override
-    public void deleteItem(String itemCode) {
-        // Soft delete
-        String sql = "UPDATE items SET is_deleted = TRUE WHERE itemCode = ?";
+    public void deleteById(int id) {
+        String query = "DELETE FROM items WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, itemCode);
-            stmt.executeUpdate();
-
+            stmt.setInt(1, id);
+            int rows = stmt.executeUpdate();
+            System.out.println("Rows deleted: " + rows);  // Optional: Debug
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public List<Item> getAllItems() {
-        List<Item> items = new ArrayList<>();
-        String sql = "SELECT * FROM items WHERE is_deleted = FALSE ORDER BY created_at DESC";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                Item item = new Item();
-                item.setItemCode(rs.getString("itemCode"));
-                item.setName(rs.getString("itemName"));
-                item.setPrice(rs.getDouble("price"));
-                item.setStock(rs.getInt("stock"));
-                item.setCreatedAt(rs.getTimestamp("created_at"));
-                item.setDeleted(rs.getBoolean("is_deleted"));
-                items.add(item);
-            }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return items;
-    }
-
-    @Override
-    public Item getItemByCode(String itemCode) {
-        String sql = "SELECT * FROM items WHERE itemCode = ? AND is_deleted = FALSE";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, itemCode);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    Item item = new Item();
-                    item.setItemCode(rs.getString("itemCode"));
-                    item.setName(rs.getString("itemName"));
-                    item.setPrice(rs.getDouble("price"));
-                    item.setStock(rs.getInt("stock"));
-                    item.setCreatedAt(rs.getTimestamp("created_at"));
-                    item.setDeleted(rs.getBoolean("is_deleted"));
-                    return item;
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    private Item extractItem(ResultSet rs) throws SQLException {
+        Item item = new Item();
+        item.setItemCode(rs.getString("item_code"));
+        item.setName(rs.getString("name"));
+        item.setPrice(rs.getDouble("price"));
+        item.setStock(rs.getInt("stock"));
+        return item;
     }
 }

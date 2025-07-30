@@ -15,6 +15,14 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version> <!-- or compatible version -->
+      <scope>provided</scope>
+    </dependency>
+
+
   </dependencies>
   <build>
     <finalName>demo</finalName>
