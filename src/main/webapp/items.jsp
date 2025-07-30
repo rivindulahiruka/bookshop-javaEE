@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="main.model.Item" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <body>
@@ -9,12 +12,12 @@
     <nav>
       <ul class="nav">
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
-        <li><a href="customer.jsp" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
-        <li><a href="items.jsp" class="nav-link active">📦 Items</a></li>
-        <li><a href="#" class="nav-link">🗂️ Account Details</a></li>
-        <li><a href="#" class="nav-link">💳 Billing</a></li>
-        <li><a href="#" class="nav-link">🆘 Help</a></li>
-        <li><a href="#" class="nav-link">📈 Reports</a></li>
+        <li><a href="Customer" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
+        <li><a href="Item" class="nav-link">📦 Items</a></li>
+        <li><a href="AccountDetails" class="nav-link">🗂️ Account Details</a></li>
+        <li><a href="billing.jsp" class="nav-link">💳 Billing</a></li>
+        <li><a href="help.jsp" class="nav-link">🆘 Help</a></li>
+        <li><a href="reports.jsp" class="nav-link">📈 Reports</a></li>
       </ul>
     </nav>
     <div class="logout-container">
@@ -27,20 +30,18 @@
     <h2 class="title">📦 Item Management</h2>
 
     <!-- Add/Update Item Form -->
-    <form class="item-form" method="post" action="ItemUploadServlet" enctype="multipart/form-data">
-      <h3>Add / Update Item</h3>
-      <div class="form-group">
+    <form class="item-form" method="post" action="<%= request.getContextPath() %>/Item">
+    <div class="form-group">
         <input type="text" name="itemCode" placeholder="Item Code" required />
         <input type="text" name="itemName" placeholder="Item Name" required />
-      </div>
-      <div class="form-group">
-        <input type="number" name="price" placeholder="Price" required />
-        <input type="number" name="stock" placeholder="Stock Quantity" required />
-      </div>
-      <div class="form-group">
-        <input type="file" name="itemImage" accept="image/*" />
-      </div>
-      <button type="submit" class="btn-submit">Save Item</button>
+    </div>
+    <div class="form-group">
+        <input type="number" step="0.01" name="price" placeholder="Price" required />
+        <input type="number" name="stock" placeholder="Stock" required />
+    </div>
+        <input type="hidden" name="action" id="formAction" value="add" />
+
+        <button class="btn-submit" type="submit">Save Item</button>
     </form>
 
 
@@ -58,17 +59,47 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Example Row -->
+          <%
+              List<main.model.Item> items = (List<main.model.Item>) request.getAttribute("items");
+              if (items != null) {
+                  for (main.model.Item item : items) {
+          %>
           <tr>
-            <td>ITM001</td>
-            <td>Notebook A5</td>
-            <td>250.00</td>
-            <td>120</td>
-            <td>
-              <button class="btn-edit">Edit</button>
-              <button class="btn-delete">Delete</button>
-            </td>
+              <td><%= item.getItemCode() %></td>
+              <td><%= item.getName() %></td>
+              <td><%= item.getPrice() %></td>
+              <td><%= item.getStock() %></td>
+              <td>
+                  <button
+                    class="btn-edit"
+                    data-code="<%= item.getItemCode() %>"
+                    data-name="<%= item.getName() %>"
+                    data-price="<%= item.getPrice() %>"
+                    data-stock="<%= item.getStock() %>">Edit</button>
+
+                <form method="post" action="${pageContext.request.contextPath}/Item" style="display:inline;">
+                        <input type="hidden" name="action" value="delete"/>
+                        <input type="hidden" name="itemCode" value="<%= item.getItemCode() %>"/>
+                        <button type="submit" class="btn-delete"
+                                onclick="return confirm('Are you sure you want to delete this item?');">
+                            Delete
+                        </button>
+                    </form>
+
+
+              </td>
           </tr>
+          <%
+                  }
+              } else {
+          %>
+          <tr>
+              <td colspan="5">No items found.</td>
+          </tr>
+          <%
+              }
+          %>
+
         </tbody>
       </table>
     </div>
@@ -80,10 +111,47 @@
 
 
 
+
+
+<script>
+  // When DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const editButtons = document.querySelectorAll('.btn-edit');
+    const form = document.querySelector('.item-form');
+    const inputCode = form.querySelector('input[name="itemCode"]');
+    const inputName = form.querySelector('input[name="itemName"]');
+    const inputPrice = form.querySelector('input[name="price"]');
+    const inputStock = form.querySelector('input[name="stock"]');
+    const actionInput = document.getElementById('formAction');
+
+    editButtons.forEach(button => {
+      button.addEventListener('click', () => {
+
+        inputCode.value = button.getAttribute('data-code');
+        inputName.value = button.getAttribute('data-name');
+        inputPrice.value = button.getAttribute('data-price');
+        inputStock.value = button.getAttribute('data-stock');
+
+        inputCode.readOnly = true;
+
+        actionInput.value = 'update';
+
+        form.querySelector('.btn-submit').textContent = 'Update Item';
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
 <head>
   <meta charset="UTF-8">
   <title>Pahana Edu | Items</title>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="<%= request.getContextPath() %>/favicon.ico.png">
 
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap');
@@ -107,6 +175,10 @@
 
   /* Sidebar */
   .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
     width: 285px;
     height: 670px;
     background: rgba(255, 255, 255, 0.95);
@@ -166,6 +238,7 @@
 
   /* Main Content */
   .main {
+    margin-left: 285px;
     flex-grow: 1;
     padding: 40px;
     overflow-y: auto;
