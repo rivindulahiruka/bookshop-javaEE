@@ -9,8 +9,8 @@
     <nav>
       <ul class="nav">
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
-        <li><a href="customer.jsp" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
-        <li><a href="items.jsp" class="nav-link">📦 Items</a></li>
+        <li><a href="Customer" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
+        <li><a href="Item" class="nav-link">📦 Items</a></li>
         <li><a href="accountDetails.jsp" class="nav-link">🗂 Account Details</a></li>
         <li><a href="billing.jsp" class="nav-link">💳 Billing</a></li>
         <li><a href="#" class="nav-link">🆘 Help</a></li>
@@ -119,6 +119,10 @@
 
     /* Sidebar */
     .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
       width: 285px;
       height: 670px;
       background: rgba(255, 255, 255, 0.95);
@@ -177,6 +181,7 @@
 
     /* Main Section */
     .main {
+      margin-left: 285px;
       flex-grow: 1;
       padding: 30px;
       overflow-y: auto;

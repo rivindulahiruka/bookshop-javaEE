@@ -96,6 +96,46 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 
     @Override
+    public Customer findByAccountNumber(String accNo) {
+        String query = "SELECT * FROM customers WHERE acc_no = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, accNo);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractCustomer(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+
+    @Override
+    public Customer findByName(String name) {
+        String query = "SELECT * FROM customers WHERE name = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractCustomer(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+
+
+
+    @Override
     public boolean saveWithValidation(Customer customer) {
         if (!Validator.isNotEmpty(customer.getName())) {
             System.err.println("Error: Customer name cannot be empty!");

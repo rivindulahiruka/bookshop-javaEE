@@ -1,4 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="main.model.Customer" %>
+<%
+    Customer customer = (Customer) request.getAttribute("customer");
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,9 +14,9 @@
     <nav>
       <ul class="nav">
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
-        <li><a href="customers.jsp" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
-        <li><a href="items.jsp" class="nav-link">📦 Items</a></li>
-        <li><a href="accountDetails.jsp" class="nav-link active">🗂️ Account Details</a></li>
+        <li><a href="Customer" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
+        <li><a href="Item" class="nav-link">📦 Items</a></li>
+        <li><a href="AccountDetails" class="nav-link active">🗂️ Account Details</a></li>
         <li><a href="billing.jsp" class="nav-link">💳 Billing</a></li>
         <li><a href="help.jsp" class="nav-link">🆘 Help</a></li>
         <li><a href="reports.jsp" class="nav-link">📈 Reports</a></li>
@@ -30,34 +34,40 @@
 
     <!-- Search Box -->
     <div class="search-box">
-      <form method="get">
-        <input type="text" name="accountNumber" placeholder="Enter Account Number" required />
+      <form method="get" action="AccountDetails">
+        <input type="text" name="accountNumber" placeholder="Enter Account Number" />
+        <input type="text" name="name" placeholder="Or Enter Customer Name" />
         <button type="submit">Search</button>
       </form>
+
     </div>
 
     <!-- Display Area -->
     <div class="details">
-      <div class="detail-row">
-        <div class="label">Account Number:</div>
-        <div class="value">1001</div>
-      </div>
-      <div class="detail-row">
-        <div class="label">Full Name:</div>
-        <div class="value">Dimalsha Sachinthani</div>
-      </div>
-      <div class="detail-row">
-        <div class="label">Address:</div>
-        <div class="value">123 Lotus Avenue, Colombo</div>
-      </div>
-      <div class="detail-row">
-        <div class="label">Telephone:</div>
-        <div class="value">0771234567</div>
-      </div>
-      <div class="detail-row">
-        <div class="label">Units Consumed:</div>
-        <div class="value">150</div>
-      </div>
+      <% if (customer != null) { %>
+        <div class="detail-row">
+          <div class="label">Account Number:</div>
+          <div class="value"><%= customer.getaccNo() %></div>
+        </div>
+        <div class="detail-row">
+          <div class="label">Full Name:</div>
+          <div class="value"><%= customer.getName() %></div>
+        </div>
+        <div class="detail-row">
+          <div class="label">Address:</div>
+          <div class="value"><%= customer.getAddress() %></div>
+        </div>
+        <div class="detail-row">
+          <div class="label">Telephone:</div>
+          <div class="value"><%= customer.getPhone() %></div>
+        </div>
+        <div class="detail-row">
+          <div class="label">Email:</div>
+          <div class="value"><%= customer.getEmail() %></div> <!-- Replace with actual data if available -->
+        </div>
+      <% } else if (request.getParameter("accountNumber") != null || request.getParameter("name") != null) { %>
+        <p style="color: red;">❌ No customer found with that information.</p>
+      <% } %>
     </div>
   </main>
 </div>
@@ -90,6 +100,10 @@
 
           /* Sidebar */
           .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
             width: 285px;
             height: 670px;
             background: rgba(255, 255, 255, 0.95);
@@ -155,6 +169,7 @@
 
     /* Main Content */
     .main {
+      margin-left: 285px;
       flex-grow: 1;
       padding: 50px;
     }
