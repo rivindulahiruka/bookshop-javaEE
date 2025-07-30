@@ -4,6 +4,13 @@
     Customer customer = (Customer) request.getAttribute("customer");
 %>
 
+<%@ page import="main.model.Item" %>
+<%@ page import="java.util.List" %>
+
+<%
+    List<Item> items = (List<Item>) request.getAttribute("items");
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -68,13 +75,18 @@
 
       <!-- Left: Item List -->
       <div class="item-list">
-        <!-- Sample Item -->
-        <div class="item">
-          <h4 class="item-name">Notebook</h4>
-          <p class="item-price">Rs. 250</p>
-          <button class="add-to-cart">Add to Cart</button>
-        </div>
-      </div>
+              <% if (items != null && !items.isEmpty()) {
+                   for (Item item : items) { %>
+                <div class="item">
+                  <h4 class="item-name"><%= item.getName() %></h4>
+                  <p class="item-price">Rs. <%= item.getPrice() %></p>
+                  <button class="add-to-cart">Add to Cart</button>
+                </div>
+              <% }
+                 } else { %>
+                <p>No items found.</p>
+              <% } %>
+            </div>
 
 
 
@@ -100,13 +112,29 @@
                 <div id="modal-summary"></div>
                 <hr />
                 <h4>Customer Details</h4>
-                <form>
-                  <input type="text" placeholder="Full Name" required />
-                  <input type="text" placeholder="Address" required />
-                  <input type="tel" placeholder="Contact Number" required />
-                  <input type="email" placeholder="Email" required />
-                  <button type="submit">Confirm Order</button>
-                </form>
+                <% if (customer != null) { %>
+                  <form>
+                    <div class="detail-row">
+                      <div class="label">Full Name:</div>
+                      <div class="value"><%= customer.getName() %></div>
+                    </div>
+                    <div class="detail-row">
+                      <div class="label">Address:</div>
+                      <div class="value"><%= customer.getAddress() %></div>
+                    </div>
+                    <div class="detail-row">
+                      <div class="label">Contact Number:</div>
+                      <div class="value"><%= customer.getPhone() %></div>
+                    </div>
+                    <div class="detail-row">
+                      <div class="label">Email:</div>
+                      <div class="value"><%= customer.getEmail() %></div>
+                    </div>
+                    <button type="submit">Confirm Order</button>
+                  </form>
+                <% } else { %>
+                  <p style="color:red;">❌ Customer data not found. Please perform a search or login first.</p>
+                <% } %>
               </div>
     </div>
   </div>
@@ -119,105 +147,109 @@
 
 
 <script>
-  const cartItemsContainer = document.querySelector('.cart-items');
-  const addToCartBtn = document.querySelector('.add-to-cart');
-  const totalPriceSpan = document.getElementById('total-price');
-  const modal = document.querySelector('.modal');
-  const modalClose = document.querySelector('.close');
-  const checkoutBtn = document.querySelector('.checkout');
-  const modalSummary = document.getElementById('modal-summary');
+  document.addEventListener('DOMContentLoaded', () => {
+    const cart = {};
+    let total = 0;
 
-  let cart = {};
-  let total = 0;
+    const cartItemsContainer = document.querySelector('.cart-items');
+    const totalPriceSpan = document.getElementById('total-price');
+    const modal = document.querySelector('.modal');
+    const modalClose = document.querySelector('.close');
+    const checkoutBtn = document.querySelector('.checkout');
+    const modalSummary = document.getElementById('modal-summary');
 
-  // Add to cart button action
-  addToCartBtn.addEventListener('click', () => {
-    const itemName = document.querySelector('.item-name').textContent;
-    const itemPrice = parseInt(document.querySelector('.item-price').textContent.replace('Rs. ', ''));
+    // Handle Add to Cart
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', () => {
+        const itemElement = button.closest('.item');
+        const itemName = itemElement.querySelector('.item-name').textContent.trim();
+        const itemPrice = parseInt(itemElement.querySelector('.item-price').textContent.replace('Rs. ', ''));
 
-    // If item exists in cart, increase quantity
-    if (cart[itemName]) {
-      cart[itemName].quantity += 1;
-    } else {
-      cart[itemName] = {
-        price: itemPrice,
-        quantity: 1
-      };
-    }
-
-    updateCartDisplay();
-  });
-
-  // Update cart panel
-  function updateCartDisplay() {
-    cartItemsContainer.innerHTML = '';
-    total = 0;
-
-    for (const [name, item] of Object.entries(cart)) {
-      const itemTotal = item.price * item.quantity;
-      total += itemTotal;
-
-      const div = document.createElement('div');
-      div.className = 'cart-item';
-      div.innerHTML = `
-        <span>${name}</span>
-        <div class="quantity-controls">
-          <button class="decrease" data-name="${name}">−</button>
-          <span class="quantity">${item.quantity}</span>
-          <button class="increase" data-name="${name}">+</button>
-        </div>
-        <span class="price">Rs. ${itemTotal}</span>
-      `;
-
-      cartItemsContainer.appendChild(div);
-    }
-
-    totalPriceSpan.textContent = `Rs. ${total}`;
-    attachQtyButtonListeners();
-  }
-
-  // Attach listeners to increase/decrease buttons
-  function attachQtyButtonListeners() {
-    document.querySelectorAll('.increase').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const name = btn.dataset.name;
-        cart[name].quantity++;
-        updateCartDisplay();
-      });
-    });
-
-    document.querySelectorAll('.decrease').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const name = btn.dataset.name;
-        if (cart[name].quantity > 1) {
-          cart[name].quantity--;
+        if (cart[itemName]) {
+          cart[itemName].quantity += 1;
         } else {
-          delete cart[name];
+          cart[itemName] = {
+            price: itemPrice,
+            quantity: 1
+          };
         }
+
         updateCartDisplay();
       });
     });
-  }
 
-  // Show checkout modal with summary
-  checkoutBtn.addEventListener('click', () => {
-    modalSummary.innerHTML = '';
-    for (const [name, item] of Object.entries(cart)) {
-      const line = document.createElement('p');
-      line.textContent = `${name} x ${item.quantity} - Rs. ${item.price * item.quantity}`;
-      modalSummary.appendChild(line);
+    // Update Cart UI
+    function updateCartDisplay() {
+      cartItemsContainer.innerHTML = '';
+      total = 0;
+
+      for (const [name, item] of Object.entries(cart)) {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <span>${name}</span>
+          <div class="quantity-controls">
+            <button class="decrease" data-name="${name}">−</button>
+            <span class="quantity">${item.quantity}</span>
+            <button class="increase" data-name="${name}">+</button>
+          </div>
+          <span class="price">Rs. ${itemTotal}</span>
+        `;
+
+        cartItemsContainer.appendChild(div);
+      }
+
+      totalPriceSpan.textContent = `Rs. ${total}`;
+      attachQtyButtonListeners();
     }
 
-    const totalLine = document.createElement('p');
-    totalLine.innerHTML = `<strong>Total: Rs. ${total}</strong>`;
-    modalSummary.appendChild(totalLine);
+    // Attach + and − listeners
+    function attachQtyButtonListeners() {
+      document.querySelectorAll('.increase').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const name = btn.dataset.name;
+          cart[name].quantity++;
+          updateCartDisplay();
+        });
+      });
 
-    modal.classList.remove('hidden');
-  });
+      document.querySelectorAll('.decrease').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const name = btn.dataset.name;
+          if (cart[name].quantity > 1) {
+            cart[name].quantity--;
+          } else {
+            delete cart[name];
+          }
+          updateCartDisplay();
+        });
+      });
+    }
 
-  // Close modal
-  modalClose.addEventListener('click', () => {
-    modal.classList.add('hidden');
+    // Checkout: Show Modal
+    checkoutBtn.addEventListener('click', () => {
+      modalSummary.innerHTML = '';
+
+      for (const [name, item] of Object.entries(cart)) {
+        const line = document.createElement('p');
+        line.textContent = `${name} x ${item.quantity} - Rs. ${item.price * item.quantity}`;
+        modalSummary.appendChild(line);
+      }
+
+      const totalLine = document.createElement('p');
+      totalLine.innerHTML = `<strong>Total: Rs. ${total}</strong>`;
+      modalSummary.appendChild(totalLine);
+
+      modal.classList.remove('hidden');
+    });
+
+    // Close Modal
+    modalClose.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
   });
 </script>
 
@@ -327,8 +359,8 @@
     .item-list {
       flex-grow: 1;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
     }
 
     .item {

@@ -28,6 +28,6 @@ public class SearchCustomerServlet extends HttpServlet {
         }
 
         request.setAttribute("customer", customer);
-        request.getRequestDispatcher("billing.jsp").forward(request, response);
+        request.getRequestDispatcher("BillingPage").forward(request, response);
     }
 }
