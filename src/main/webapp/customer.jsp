@@ -12,8 +12,8 @@
     <nav>
       <ul class="nav">
         <li><a href="dashboard.jsp" class="nav-link">📚 Dashboard</a></li>
-        <li><a href="CustomerList" class="nav-link active">🧑‍🤝‍🧑 Customers</a></li>
-        <li><a href="items.jsp" class="nav-link">📦 Items</a></li>
+        <li><a href="Customer" class="nav-link active">🧑‍🤝‍🧑 Customers</a></li>
+        <li><a href="Item" class="nav-link">📦 Items</a></li>
         <li><a href="accountDetails.jsp" class="nav-link">🗂 Account Details</a></li>
         <li><a href="billing.jsp" class="nav-link">💳 Billing</a></li>
         <li><a href="#" class="nav-link">🆘 Help</a></li>
@@ -61,31 +61,38 @@
             <th>Address</th>
             <th>Phone</th>
             <th>Email</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <%
-            List<Customer> customers = (List<Customer>) request.getAttribute("customers");
-            if (customers != null) {
-              for (Customer customer : customers) {
-          %>
-          <tr>
-            <td><%= customer.getaccNo() %></td>
-            <td><%= customer.getName() %></td>
-            <td><%= customer.getAddress() %></td>
-            <td><%= customer.getPhone() %></td>
-            <td><%= customer.getEmail() %></td>
-          </tr>
-          <%
-              }
-            } else {
-          %>
-          <tr>
-            <td colspan="5">No customers found.</td>
-          </tr>
-          <%
-            }
-          %>
+         <%
+           List<Customer> customers = (List<Customer>) request.getAttribute("customers");
+           if (customers != null) {
+             for (Customer customer : customers) {
+         %>
+         <tr>
+           <td><%= customer.getaccNo() %></td>
+           <td><%= customer.getName() %></td>
+           <td><%= customer.getAddress() %></td>
+           <td><%= customer.getPhone() %></td>
+           <td><%= customer.getEmail() %></td>
+           <td>
+             <a href="Customer?action=edit&id=<%= customer.getId() %>" class="btn-edit">Edit</a>
+             <a href="Customer?action=delete&id=<%= customer.getId() %>" class="btn-delete"
+                onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
+           </td>
+         </tr>
+         <%
+             }
+           } else {
+         %>
+         <tr>
+           <td colspan="6">No customers found.</td>
+         </tr>
+         <%
+           }
+         %>
+
         </tbody>
       </table>
     </div>
@@ -121,6 +128,10 @@
 
   /* Sidebar */
   .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
     width: 285px;
     height:670px;
     background: rgba(255, 255, 255, 0.95);
@@ -183,6 +194,7 @@
 
   /* Main Content */
   .main {
+    margin-left: 285px;
     flex-grow: 1;
     padding: 40px;
     overflow-y: auto;
