@@ -12,7 +12,7 @@
         <li><a href="Customer" class="nav-link">🧑‍🤝‍🧑 Customers</a></li>
         <li><a href="Item" class="nav-link">📦 Items</a></li>
         <li><a href="accountDetails.jsp" class="nav-link">🗂 Account Details</a></li>
-        <li><a href="billing.jsp" class="nav-link">💳 Billing</a></li>
+        <li><a href="BillingPage" class="nav-link">💳 Billing</a></li>
         <li><a href="#" class="nav-link">🆘 Help</a></li>
         <li><a href="" class="nav-link">📈 Reports</a></li>
       </ul>
