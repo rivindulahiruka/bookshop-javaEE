@@ -103,6 +103,7 @@ public class ItemDAOImpl implements ItemDAO {
 
     private Item extractItem(ResultSet rs) throws SQLException {
         Item item = new Item();
+        item.setId(rs.getInt("id"));
         item.setItemCode(rs.getString("item_code"));
         item.setName(rs.getString("name"));
         item.setPrice(rs.getDouble("price"));
