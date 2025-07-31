@@ -14,7 +14,7 @@
         <li><a href="accountDetails.jsp" class="nav-link">🗂 Account Details</a></li>
         <li><a href="BillingPage" class="nav-link">💳 Billing</a></li>
         <li><a href="#" class="nav-link">🆘 Help</a></li>
-        <li><a href="" class="nav-link">📈 Reports</a></li>
+        <li><a href="Order" class="nav-link">📈 Orders</a></li>
       </ul>
     </nav>
 
