@@ -1,4 +1,4 @@
-package dao.impl;
+package main.dao.impl;
 
 import main.dao.ItemDAO;
 import main.model.Item;
@@ -89,10 +89,10 @@ public class ItemDAOImpl implements ItemDAO {
         String query = "DELETE FROM items WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
+            System.out.println("Attempting to delete item with ID: " + id);
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();
-            System.out.println("Rows deleted: " + rows);  // Optional: Debug
+            System.out.println("Rows deleted: " + rows);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -103,6 +103,7 @@ public class ItemDAOImpl implements ItemDAO {
 
     private Item extractItem(ResultSet rs) throws SQLException {
         Item item = new Item();
+        item.setId(rs.getInt("id"));
         item.setItemCode(rs.getString("item_code"));
         item.setName(rs.getString("name"));
         item.setPrice(rs.getDouble("price"));

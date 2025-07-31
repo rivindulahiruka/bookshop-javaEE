@@ -1,6 +1,6 @@
 package main.servlet;
 
-import dao.impl.ItemDAOImpl;
+import main.dao.impl.ItemDAOImpl;
 import main.model.Item;
 
 import jakarta.servlet.ServletException;

@@ -77,9 +77,10 @@
                     data-price="<%= item.getPrice() %>"
                     data-stock="<%= item.getStock() %>">Edit</button>
 
-                <form method="post" action="${pageContext.request.contextPath}/Item" style="display:inline;">
+               <form method="post" action="<%= request.getContextPath() %>/Item">
+
                         <input type="hidden" name="action" value="delete"/>
-                        <input type="hidden" name="itemCode" value="<%= item.getItemCode() %>"/>
+                        <input type="hidden" name="id" value="<%= item.getId() %>"/>
                         <button type="submit" class="btn-delete"
                                 onclick="return confirm('Are you sure you want to delete this item?');">
                             Delete
